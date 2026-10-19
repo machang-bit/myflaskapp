@@ -2,7 +2,6 @@ pipeline {
     agent any
     
     environment {
-        // =========已经替换成你本机Python路径=========
         PYTHON_PATH = 'D:\\Python315\\python.exe'
     }
     
@@ -11,23 +10,22 @@ pipeline {
             steps {
                 bat """
                     @echo off
-                    echo "=== 验证Python版本 ==="
-                    ${PYTHON_PATH} --version
+                    echo "=== 验证Python路径及版本 ==="
+                    ${PYTHON_PATH} --version  // 仅保留此关键验证（成功即证明路径正确）
                     echo "Python路径验证通过！"
                 """
             }
         }
         stage('Checkout') {
             steps {
-                // 拉取你的github仓库代码
-                git url: 'https://github.com/machang-bit/flash-web-app.git', branch: 'main'
+                git url: 'https://github.com/machang-bit/myflaskapp.git', branch: 'main'
             }
         }
         stage('Fix pip') {
             steps {
                 bat """
                     @echo off
-                    echo "=== 升级pip ==="
+                    echo "=== 修复Python的pip环境 ==="
                     ${PYTHON_PATH} -m ensurepip --upgrade  
                     ${PYTHON_PATH} -m pip --version       
                 """
@@ -42,15 +40,15 @@ pipeline {
                 """
             }
         }
-        stage('Lint 代码静态检查') {
+        stage('Lint') {
             steps {
                 bat "${PYTHON_PATH} -m pip install flake8 && ${PYTHON_PATH} -m flake8 app.py tests/"
             }
         }
-        stage('Test 单元测试+覆盖率') {
+        stage('Test') {
             steps {
                 bat """
-                    ${PYTHON_PATH} -m pip install pytest pytest-cov
+                    ${PYTHON_PATH} -m pip install pytest
                     ${PYTHON_PATH} -m pytest --cov=app tests/ --cov-report=html
                 """
             }
@@ -67,7 +65,7 @@ pipeline {
                 }
             }
         }
-        stage('Build 打包exe') {
+        stage('Build') {
             steps {
                 bat """
                     ${PYTHON_PATH} -m pip install pyinstaller
@@ -75,15 +73,15 @@ pipeline {
                 """
             }
         }
-        stage('Deploy 启动Flask') {
+        stage('Deploy') {
             steps {
                 echo 'Deploying application...'
-                bat "start ${PYTHON_PATH} app.py"
+                // bat "start ${PYTHON_PATH} app.py"
             }
         }
     }
     post {
-        success { echo '✅ CI/CD流水线全部执行成功!' }
-        failure { echo '❌ CI/CD流水线执行失败!' }
+        success { echo 'CI/CD pipeline completed successfully!' }
+        failure { echo 'CI/CD pipeline failed!' }
     }
 }
