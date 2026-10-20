@@ -10,7 +10,7 @@ pipeline {
             steps {
                 bat """
                     @echo off
-                    echo "=== 验证Python路径及版本 ==="
+                    echo "=== 验证Python315路径及版本 ==="
                     ${PYTHON_PATH} --version  // 仅保留此关键验证（成功即证明路径正确）
                     echo "Python路径验证通过！"
                 """
@@ -25,7 +25,7 @@ pipeline {
             steps {
                 bat """
                     @echo off
-                    echo "=== 修复Python的pip环境 ==="
+                    echo "=== 修复Python315的pip环境 ==="
                     ${PYTHON_PATH} -m ensurepip --upgrade  
                     ${PYTHON_PATH} -m pip --version       
                 """
@@ -76,7 +76,7 @@ pipeline {
         stage('Deploy') {
             steps {
                 echo 'Deploying application...'
-                // bat "start ${PYTHON_PATH} app.py"
+                bat "${PYTHON_PATH} app.py"
             }
         }
     }
