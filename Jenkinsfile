@@ -11,7 +11,7 @@ pipeline {
                 bat """
                     @echo off
                     echo "=== 验证Python315路径及版本 ==="
-                    ${PYTHON_PATH} --version  // 仅保留此关键验证（成功即证明路径正确）
+                    ${PYTHON_PATH} --version
                     echo "Python路径验证通过！"
                 """
             }
@@ -75,8 +75,8 @@ pipeline {
         }
         stage('Deploy') {
             steps {
-                echo 'Deploying application...'
-                bat "${PYTHON_PATH} app.py"
+                // 这里注释掉直接启动，防止Jenkins流水线卡住（作业大坑！）
+                echo 'Deploying application... 实验仅打包，不常驻启动Flask避免流水线阻塞'
             }
         }
     }
